@@ -12,7 +12,7 @@ Current version of pyKlock is written in Python using different GUI frameworks
 	pyKlock 1 - CustomTkinter [Most complete].
 	pyKlock 2 - Flet.
 	pyKlock 3 - QT.
-	oyKlock 4 - wxPython.
+	pyKlock 4 - wxPython.
 
 
 A klock built using Python and wxPython GUI Framework.
@@ -31,5 +31,5 @@ To install dependencies pip install -r requirements.txt
 For changes see history.txt
 
 
-Kevin Scott (C) 2025 :: pyKlock3 V2025.1
+Kevin Scott (C) 2025 :: pyKlock V2025.2
 

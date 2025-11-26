@@ -1,7 +1,8 @@
 ###############################################################################################################
-#    history.txt   Copyright (C) <2025>  <Kevin Scott>                                                        #
+#    satatusBar.py   Copyright (C) <2025>  <Kevin Scott>                                                      #
+#    A statusbar for klock.                                                                                   #
 #                                                                                                             #
-#    History file for pyKlock4.                                                                               #
+#    For changes see history.txt                                                                              #
 #                                                                                                             #
 ###############################################################################################################
 #                                                                                                             #
@@ -18,33 +19,36 @@
 #                                                                                                             #
 ###############################################################################################################
 
-Previous versions of pyKlock have existed in VB.net, Lazarus [Free Pascal] and Free Basic - and may again.
+import wx
 
-Current version of pyKlock is written in Python using different GUI frameworks
+import src.utils.klock_utils as utils
 
-	pyKlock 0 - pygubu & pySimpleGUI - finaly settled on pySimpleGUI.  
-	pyKlock 1 - CustomTkinter [Most complete].
-	pyKlock 2 - Flet.
-	pyKlock 3 - QT.
-	pyKlock 4 - wxPython.
+class StatusBar(wx.StatusBar):
+    """  A custom class wrapping wx.StatusBar.
+    """
 
-Note : pySimpleGUI is licensed software product, but free for hobbyist [but need to register]
+    def __init__(self, parent, id):
+        """  initialise the status bar.
+        """
+        wx.StatusBar.__init__(self, parent, id)
 
-Note : I use the correct spelling of colour on my side of the code.  :-)
+        self.SetFieldsCount(number=4)
+        self.SetStatusWidths([-4, -2, -1, -2])
+        #self.SetStatusStyles(styles=wx.SB_SUNKEN)
 
-If no branch indicated, assume main branch.
+        self.SetStatusText("Thursday 20 November 2025", 0)
+        self.SetStatusText("L.E.D.", 1)
+        self.SetStatusText("cisN", 2)
+        self.SetStatusText("idle : 7s", 3)
 
-
-V2025.1		[26 November 2025]
-
-	Basic mock up of pyKlock.
-	Displays the local time using the wx LED widget.
-	Their is a working status bar showing date, key status and idle time.
-		key status = Caps Lock, Insert, Scroll Lock and Num Lock.
-	The windows size and position is read from a config file.
-
-V2025.1		[26 November 2025]
-
-	Wrapped the Status bar into it's own class, to separate it from the main code.
+        #self.SetTransparent(24)
 
 
+    def updateStatusBar(self, timeMode):
+        """  Updates the status bar.
+        """
+        strDate = wx.DateTime.Now().Format("%A %d %B %Y")
+        self.SetStatusText(f"{strDate}", 0)
+        self.SetStatusText(f"{timeMode}", 1)
+        self.SetStatusText(f"{utils.getState()}", 2)
+        self.SetStatusText(f"{utils.getIdleDuration()}", 3)

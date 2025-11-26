@@ -1,6 +1,6 @@
 ###############################################################################################################
 #    pyKlock4   Copyright (C) <2025>  <Kevin Scott>                                                           #
-#    A klock built using the wxPython framework.                    .                                         #
+#    A klock built using the wxPython framework.                                                              #
 #                                                                                                             #
 #    For changes see history.txt                                                                              #
 #                                                                                                             #
@@ -23,11 +23,10 @@ import wx
 import wx.lib.gizmos as gizmos
 
 import src.selectTime as st
-import src.utils.klock_utils as utils
+import src.classes.statusbar as sb
 
 class pyKlock(wx.Frame):
-    """
-    create nice LED clock showing the current time
+    """  Create pyKlock - shows local time.
     """
     def __init__(self, parent, id, myConfig):
 
@@ -39,7 +38,8 @@ class pyKlock(wx.Frame):
 
         wx.Frame.__init__(self, parent, id, name, pos, size)
 
-        self.selectTime = st.SelectTime()
+        self.bar = sb.StatusBar(self, -1)       #  Create the status bar.
+        self.selectTime = st.SelectTime()       #  Used to display the time in different formats.
         self.TIME_MODE  = "Local Time"
 
         self.led = gizmos.LEDNumberCtrl(self, -1, pos, size, style)
@@ -49,34 +49,25 @@ class pyKlock(wx.Frame):
         self.timer.Start(1000)
         self.Bind(wx.EVT_TIMER, self.OnTimer)
 
-        self.stsBar = self.CreateStatusBar(number=4)
-        self.stsBar.SetStatusText("Thursday 20 November 2025", 0)
-        self.stsBar.SetStatusText("L.E.D.", 1)
-        self.stsBar.SetStatusText("cisN", 2)
-        self.stsBar.SetStatusText("idle : 7s", 3)
-
-        self.stsBar.SetStatusWidths([-4, -2, -1, -2])
-
         # default colours are green on black
         self.led.SetBackgroundColour("Black")
         self.led.SetForegroundColour("Green")
 
+        self.SetStatusBar(self.bar)             #  Add the status bar to ptKlock.
+
+        # Instead we'll just call the SetTransparent method
+        #self.SetTransparent(125)
+
         self.OnTimer(None)
 
     def OnTimer(self, event):
+        """  Called every second - updated the time and the status bar.
+        """
         self.led.SetValue(f"{self.selectTime.getTime(self.TIME_MODE)}")
 
-        self.updateStatusBar()
-
-    def updateStatusBar(self):
-        strDate = wx.DateTime.Now().Format("%A %d %B %Y")
-        self.stsBar.SetStatusText(f"{strDate}", 0)
-        self.stsBar.SetStatusText(f"{self.TIME_MODE}", 1)
-        self.stsBar.SetStatusText(f"{utils.getState()}", 2)
-        self.stsBar.SetStatusText(utils.getIdleDuration(), 3)
+        self.bar.updateStatusBar(self.TIME_MODE)
 
 
-# test the clock ...
 if __name__ == "__main__":
     app = wx.App()
     frame = pyKlock(None, -1)
