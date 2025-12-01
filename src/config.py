@@ -118,6 +118,31 @@ class Config():
         """
         self.config["APPLICATION"]["height"] = value
 
+    @property
+    def DIGITAL_BACKGROUND_COLOUR(self):
+        """  Returns the window width.
+        """
+        return self.config["DIGITAL_KLOCK"].get("backgroundColour", "Black")
+
+    @DIGITAL_BACKGROUND_COLOUR.setter
+    def DIGITAL_BACKGROUND_COLOUR(self, value):
+        """  Sets the window width.
+        """
+        self.config["DIGITAL_KLOCK"]["backgroundColour"] = value
+
+    @property
+    def DIGITAL_FOREGROUND_COLOUR(self):
+        """  Returns the window height.
+        """
+        return self.config["DIGITAL_KLOCK"].get("foregroundColour", "Green")
+
+    @DIGITAL_FOREGROUND_COLOUR.setter
+    def DIGITAL_FOREGROUND_COLOUR(self, value):
+        """  Sets the window height.
+        """
+        self.config["DIGITAL_KLOCK"]["foregroundColour"] = value
+
+
 
     def writeConfig(self):
         """ Write the current config file.
@@ -145,13 +170,16 @@ class Config():
         written = strNow.strftime("%A %d %B %Y  %H:%M:%S")
         config  = dict()
 
-        config["INFO"] = {"myVERSION": "2025.2",
+        config["INFO"] = {"myVERSION": "2025.3",
                           "myNAME"   : "pyKlock"}
 
         config["APPLICATION"] = {"x_pos"      : 100,
                                  "y_pos"      : 100,
                                  "width"      : 400,
                                  "height"     : 200}
+
+        config[DIGITAL_KLOCK] = {"backgroundColour" : "Black",
+                                 "foregroundColour" : "Green"}
 
         st_toml = toml.dumps(config)
 

@@ -30,30 +30,40 @@ class pyKlock(wx.Frame):
     """
     def __init__(self, parent, id, myConfig):
 
-        self.config     = myConfig
+        self.config = myConfig
+
         pos   = (self.config.X_POS, self.config.Y_POS)
         size  = (self.config.WIDTH, self.config.HEIGHT)
         name  = self.config.NAME
-        style = gizmos.LED_ALIGN_CENTER
 
-        wx.Frame.__init__(self, parent, id, name, pos, size)
+        self.backgroundColour = self.config.DIGITAL_BACKGROUND_COLOUR
+        self.foregroundColour = self.config.DIGITAL_FOREGROUND_COLOUR
 
-        self.bar = sb.StatusBar(self, -1)       #  Create the status bar.
+        style = wx.CAPTION | wx.CLOSE_BOX | wx.STAY_ON_TOP
+
+        wx.Frame.__init__(self, parent, id, name, pos, size, style)
+
+        panel = wx.Panel(self, -1)
+        panel.SetBackgroundColour("Black")
+
+        self.bar = sb.StatusBar(self, -1)
+        self.SetStatusBar(self.bar)             #  Create the status bar.
         self.selectTime = st.SelectTime()       #  Used to display the time in different formats.
         self.TIME_MODE  = "Local Time"
 
-        self.led = gizmos.LEDNumberCtrl(self, -1, pos, size, style)
+        width, height = panel.GetSize()
+        style    = gizmos.LED_ALIGN_CENTER
+        self.led = gizmos.LEDNumberCtrl(panel, -1, (0,0), (width, height), style)
 
         self.timer = wx.Timer(self, -1)
         # update clock digits every second (1000ms)
         self.timer.Start(1000)
         self.Bind(wx.EVT_TIMER, self.OnTimer)
 
-        # default colours are green on black
-        self.led.SetBackgroundColour("Black")
-        self.led.SetForegroundColour("Green")
+        self.Bind(wx.EVT_CLOSE, self.OnCloseWindow)
 
-        self.SetStatusBar(self.bar)             #  Add the status bar to ptKlock.
+        self.led.SetBackgroundColour(self.backgroundColour)
+        self.led.SetForegroundColour(self.foregroundColour)
 
         # Instead we'll just call the SetTransparent method
         #self.SetTransparent(125)
@@ -66,6 +76,25 @@ class pyKlock(wx.Frame):
         self.led.SetValue(f"{self.selectTime.getTime(self.TIME_MODE)}")
 
         self.bar.updateStatusBar(self.TIME_MODE)
+
+    def OnCloseWindow(self, event):
+        """  close pyKlock at user request.
+        """
+        x_pos, y_pos  = self.GetPosition()
+        width, height = self.GetSize()
+
+        self.config.X_POS  = x_pos
+        self.config.Y_POS  = y_pos
+        self.config.WIDTH  = width
+        self.config.HEIGHT = height
+
+        self.config.DIGITAL_BACKGROUND_COLOUR = self.backgroundColour
+        self.config.DIGITAL_FOREGROUND_COLOUR = self.foregroundColour
+
+        self.config.writeConfig()               #  Update config file.
+
+        self.Destroy()
+
 
 
 if __name__ == "__main__":

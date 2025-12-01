@@ -43,8 +43,15 @@ V2025.1		[26 November 2025]
 		key status = Caps Lock, Insert, Scroll Lock and Num Lock.
 	The windows size and position is read from a config file.
 
-V2025.1		[26 November 2025]
+V2025.2		[26 November 2025]
 
 	Wrapped the Status bar into it's own class, to separate it from the main code.
 
+
+V2025.3		[1 December 2025]
+
+	The initial frames size and position is not read from the config file.
+	The L.E.D. background and foreground colours are read from the config file.
+		Only can be altered by editing the config file, at the moment.
+	All are rewritten to the config file on Klock closing.
 
