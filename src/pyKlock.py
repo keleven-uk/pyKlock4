@@ -39,17 +39,19 @@ class pyKlock(wx.Frame):
         self.backgroundColour = self.config.DIGITAL_BACKGROUND_COLOUR
         self.foregroundColour = self.config.DIGITAL_FOREGROUND_COLOUR
 
-        style = wx.CAPTION | wx.CLOSE_BOX | wx.STAY_ON_TOP
+        style = wx.CAPTION | wx.CLOSE_BOX | wx.STAY_ON_TOP | wx.CLIP_CHILDREN
 
         wx.Frame.__init__(self, parent, id, name, pos, size, style)
 
+        print(self.CanSetTransparent())
         panel = wx.Panel(self, -1)
-        panel.SetBackgroundColour("Black")
+        panel.SetBackgroundColour(self.config.DIGITAL_BACKGROUND_COLOUR)
 
         self.bar = sb.StatusBar(self, -1)
-        self.SetStatusBar(self.bar)             #  Create the status bar.
-        self.selectTime = st.SelectTime()       #  Used to display the time in different formats.
-        self.TIME_MODE  = "Local Time"
+        self.SetStatusBar(self.bar)               #  Create the status bar.
+        self.selectTime   = st.SelectTime()       #  Used to display the time in different formats.
+        self.TIME_MODE    = "Local Time"
+        self.transparency = self.config.TRANSPARENCY
 
         width, height = panel.GetSize()
         style    = gizmos.LED_ALIGN_CENTER
@@ -60,13 +62,23 @@ class pyKlock(wx.Frame):
         self.timer.Start(1000)
         self.Bind(wx.EVT_TIMER, self.OnTimer)
 
-        self.Bind(wx.EVT_CLOSE, self.OnCloseWindow)
-
         self.led.SetBackgroundColour(self.backgroundColour)
         self.led.SetForegroundColour(self.foregroundColour)
+        self.bar.SetBackgroundColour("White")                   #  On Windows, colours are ignored by the statusbar.
+        self.bar.SetForegroundColour("Black")
+
+        self.led.Bind(wx.EVT_LEFT_DOWN, self.OnLeftDown)
+        self.led.Bind(wx.EVT_LEFT_UP,   self.OnLeftUp)
+        self.led.Bind(wx.EVT_MOTION,    self.OnMouseMove)
+
+        self.Bind(wx.EVT_CLOSE, self.OnCloseWindow)
 
         # Instead we'll just call the SetTransparent method
-        #self.SetTransparent(125)
+        if self.config.TRANSPARENT:
+            self.SetTransparent(self.transparency)
+            self.led.SetTransparent(255)
+            self.bar.SetTransparent(self.transparency)
+
 
         self.OnTimer(None)
 
@@ -76,6 +88,30 @@ class pyKlock(wx.Frame):
         self.led.SetValue(f"{self.selectTime.getTime(self.TIME_MODE)}")
 
         self.bar.updateStatusBar(self.TIME_MODE)
+
+    #  The code for moving the window with the mouse was adapted from wxPython in Action -
+
+    def OnLeftDown(self, evt):
+        """  Captured the original screen position when the mouse is left clicked over the time.
+             The mouse is captured unto the left mouse button is released.
+        """
+        self.led.CaptureMouse()
+        pos        = self.ClientToScreen(evt.GetPosition())
+        origin     = self.GetPosition()
+        self.delta = wx.Point(pos.x - origin.x, pos.y - origin.y)
+
+    def OnLeftUp(self, evt):
+        """  Releases the mouse events.
+        """
+        self.led.ReleaseMouse()
+
+    def OnMouseMove(self, evt):
+        """  Tracks the mouse movement and moves the window accordingly.
+        """
+        if evt.Dragging() and evt.LeftIsDown():
+            pos    = self.ClientToScreen(evt.GetPosition())
+            newPos = (pos.x - self.delta.x, pos.y - self.delta.y)
+            self.Move(newPos)
 
     def OnCloseWindow(self, event):
         """  close pyKlock at user request.
@@ -93,9 +129,9 @@ class pyKlock(wx.Frame):
 
         self.config.writeConfig()               #  Update config file.
 
+        self.timer.Stop()
+        del self.timer  # Avoid a memory leak.
         self.Destroy()
-
-
 
 if __name__ == "__main__":
     app = wx.App()

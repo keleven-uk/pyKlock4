@@ -53,5 +53,13 @@ V2025.3		[1 December 2025]
 	The initial frames size and position is not read from the config file.
 	The L.E.D. background and foreground colours are read from the config file.
 		Only can be altered by editing the config file, at the moment.
-	All are rewritten to the config file on Klock closing.
+	All are rewritten to the config file on pyKlock closing.
 
+V2025.4		[1 December 2025]
+
+	Added two new config options - TRANSPARENT & TRANSPARENCY.
+		TRANSPARENT - either True or False, set if the pyKlock is transparent.
+		TRANSPARENCY - 0 - 255, the alpha level of the transparency.
+
+		The transparency is applied to the top level frame - then all the frames children.
+			Well on MS Windows, any how's.

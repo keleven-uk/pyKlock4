@@ -57,7 +57,7 @@ class Config():
             self._writeDefaultConfig()
             self.logger.debug("Running program with default configure settings.")
 
-
+    #---------------------------------------------------------------------------------------------- INFO --------------------------------------------
     @property
     def NAME(self):
         """  Returns the application name.
@@ -69,7 +69,7 @@ class Config():
         """  Returns the application Version.
         """
         return self.config["INFO"]["myVERSION"]
-
+    #---------------------------------------------------------------------------------------------- APPLICATION -------------------------------------
     @property
     def X_POS(self):
         """  Returns the X co-ordinate of the top right hand corner of the window.
@@ -118,6 +118,54 @@ class Config():
         """
         self.config["APPLICATION"]["height"] = value
 
+    @property
+    def APPLICATION_BACKGROUND_COLOUR(self):
+        """  Returns the window width.
+        """
+        return self.config["APPLICATION"].get("backgroundColour", "Black")
+
+    @APPLICATION_BACKGROUND_COLOUR.setter
+    def APPLICATION_BACKGROUND_COLOUR(self, value):
+        """  Sets the window width.
+        """
+        self.config["APPLICATION"]["backgroundColour"] = value
+
+    @property
+    def APPLICATION_FOREGROUND_COLOUR(self):
+        """  Returns the window height.
+        """
+        return self.config["APPLICATION"].get("foregroundColour", "Green")
+
+    @APPLICATION_FOREGROUND_COLOUR.setter
+    def APPLICATION_FOREGROUND_COLOUR(self, value):
+        """  Sets the window height.
+        """
+        self.config["APPLICATION"]["foregroundColour"] = value
+
+    @property
+    def TRANSPARENT(self):
+        """  Returns the window width.
+        """
+        return self.config["APPLICATION"].get("transparent", "True")
+
+    @TRANSPARENT.setter
+    def TRANSPARENT(self, value):
+        """  Sets the window width.
+        """
+        self.config["APPLICATION"]["transparent"] = value
+
+    @property
+    def TRANSPARENCY(self):
+        """  Returns the window height.
+        """
+        return self.config["APPLICATION"].get("transparency", "124")
+
+    @TRANSPARENCY.setter
+    def TRANSPARENCY(self, value):
+        """  Sets the window height.
+        """
+        self.config["APPLICATION"]["transparency"] = value
+    #---------------------------------------------------------------------------------------------- DIGITAL_KLOCK -----------------------------------
     @property
     def DIGITAL_BACKGROUND_COLOUR(self):
         """  Returns the window width.
@@ -170,15 +218,17 @@ class Config():
         written = strNow.strftime("%A %d %B %Y  %H:%M:%S")
         config  = dict()
 
-        config["INFO"] = {"myVERSION": "2025.3",
+        config["INFO"] = {"myVERSION": "2025.4",
                           "myNAME"   : "pyKlock"}
 
-        config["APPLICATION"] = {"x_pos"      : 100,
-                                 "y_pos"      : 100,
-                                 "width"      : 400,
-                                 "height"     : 200}
+        config["APPLICATION"] = {"x_pos"            : 100,
+                                 "y_pos"            : 100,
+                                 "width"            : 400,
+                                 "height"           : 200,
+                                 "backgroundColour" : "Black",
+                                 "foregroundColour" : "Green"}
 
-        config[DIGITAL_KLOCK] = {"backgroundColour" : "Black",
+        config["DIGITAL_KLOCK"] = {"backgroundColour" : "Black",
                                  "foregroundColour" : "Green"}
 
         st_toml = toml.dumps(config)

@@ -41,9 +41,6 @@ class StatusBar(wx.StatusBar):
         self.SetStatusText("cisN", 2)
         self.SetStatusText("idle : 7s", 3)
 
-        #self.SetTransparent(24)
-
-
     def updateStatusBar(self, timeMode):
         """  Updates the status bar.
         """
